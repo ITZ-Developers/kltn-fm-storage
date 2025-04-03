@@ -1,0 +1,65 @@
+@startuml SQ
+autonumber
+title SD01. Đăng nhập
+actor "Actor" as actor
+boundary "LoginView" as loginView
+boundary "HomeView" as homeView
+control "UserService" as service
+control "TokenEnhancer" as controller
+entity "UserRepository" as model
+database "Database" as database
+
+activate actor
+actor -> loginView : access to
+activate loginView
+
+alt Password has more than 6 characters
+    alt Username does not contain spaces
+        loginView -> service : call api/token, grantedType="password"
+        activate service
+        service -> model : inject repository
+        activate model
+        model -> database : findByUsername()
+        
+        alt Username exists
+        activate database
+            database --> model: return account data
+        deactivate database
+        model --> service: return account
+        deactivate model
+
+        service --> service: checkPassword
+        alt Password correct
+            service -> controller: enhance AccessToken
+            activate controller
+            controller --> loginView: return OAuth2AccessToken
+            deactivate controller
+            loginView --> actor : notify "login success"
+            activate homeView
+            actor -> homeView : transform to
+            deactivate homeView
+        else Password incorrect
+            service --> loginView: return "username or password incorrect"
+            loginView ---> actor: notify "username or password incorrect"
+        end
+        deactivate service
+
+        else Username not found
+        activate database
+            database --> model: return null
+        deactivate database
+        model --> service: return null
+        deactivate model
+        service --> loginView: return "username or password incorrect"
+        loginView ---> actor: notify "username or password incorrect"
+        deactivate service
+        end
+    else Username contains spaces
+        loginView ---> actor: notify "username cannot contain spaces"
+    end
+else Password has 6 characters or less
+    loginView ---> actor: notify "password must have more than 6 characters"
+end
+
+deactivate loginView
+@enduml

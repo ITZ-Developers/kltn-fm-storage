@@ -1,0 +1,5 @@
+{
+  "description": "{{description}}",
+  "kind": "{{kind}}",
+  "name": "{{name}}"
+}
