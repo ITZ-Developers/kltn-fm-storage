@@ -1,0 +1,4 @@
+.env
+/uploads
+/static
+__pycache__
