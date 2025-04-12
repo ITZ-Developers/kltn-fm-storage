@@ -8,3 +8,10 @@ opencv-python
 numpy
 pymongo
 python-dotenv
+langchain
+langchain-core
+langchain-community
+faiss-cpu
+pypdf
+sentence-transformers
+langchain-huggingface

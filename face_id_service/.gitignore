@@ -1,4 +1,6 @@
 .env
-/uploads
-/static
+/**/uploads
+/**/static
 __pycache__
+uploaded.pdf
+faiss_index
