@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
-API_KEY = os.getenv("X_API_KEY")
 
 client = MongoClient(MONGO_URI)
 db = client['faceid_db']
@@ -50,8 +49,3 @@ def match_embedding(embedding):
             return user_id, 1 - dist / 10
             
     return None, 0.0
-
-def validate_api_key(api_key):
-    if not API_KEY:
-        return True
-    return api_key == API_KEY

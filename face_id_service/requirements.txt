@@ -15,3 +15,4 @@ faiss-cpu
 pypdf
 sentence-transformers
 langchain-huggingface
+huggingface_hub
