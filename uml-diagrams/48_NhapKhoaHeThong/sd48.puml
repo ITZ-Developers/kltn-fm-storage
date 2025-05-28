@@ -1,6 +1,6 @@
 @startuml SQ
 autonumber
-title SD07. Nhập khóa hệ thống
+title SD48. Nhập khóa hệ thống
 actor "Actor" as actor
 boundary "HomeView" as view
 control "AccountController" as controller
