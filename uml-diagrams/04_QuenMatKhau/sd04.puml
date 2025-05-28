@@ -10,7 +10,7 @@ control "EmailService" as service
 entity "AccountRepository" as model
 database "Database" as database
 activate actor
-actor -> ForgotPassWordView : enter email
+actor -> ForgotPassWordView : enter email, tenantId
 activate ForgotPassWordView
 ForgotPassWordView -> controller : call api POST /request-forget-password
 activate controller
