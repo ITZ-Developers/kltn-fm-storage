@@ -1,0 +1,53 @@
+@startuml SQ
+autonumber
+title SD40.3. Reset MFA
+
+actor "Actor" as actor
+boundary "ManageAccountView" as manageView
+control "AccountController" as controller
+entity "AccountRepository" as model
+database "Database" as database
+
+activate actor
+actor -> manageView : Click "Reset MFA"
+activate manageView
+
+manageView -> actor : Confirm reset MFA
+alt User confirms
+    manageView -> controller : POST /v1/account/reset-mfa \nHeaders: Authorization: Bearer <token>\nBody: { accountId }
+    activate controller
+
+    controller -> controller : Extract isSuperAdmin from token
+    alt isSuperAdmin == false
+        controller --> manageView : Return error "Can not reset MFA"
+        deactivate controller
+    else
+        controller -> model : Find account by ID
+        activate model
+
+        model -> database : SELECT * FROM account WHERE id=?
+        activate database
+        database --> model : Return account
+        deactivate database
+
+        model -> model : Set isMfa = false, secretKey = null
+        model -> database : UPDATE account SET is_mfa=false, secret_key=null WHERE id=?
+        activate database
+        database --> model : Update success
+        deactivate database
+
+        model --> controller : Reset MFA success
+        deactivate model
+
+        controller --> manageView : Return "Reset MFA successfully"
+        deactivate controller
+
+        manageView -> actor : Notify "Reset MFA successfully"
+    end
+else User cancels
+    manageView -> actor : Cancel reset MFA
+end
+
+deactivate manageView
+deactivate actor
+@enduml

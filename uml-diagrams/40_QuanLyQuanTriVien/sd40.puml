@@ -1,0 +1,49 @@
+@startuml SQ
+autonumber
+title SD40. Quản lý quản trị viên
+actor "Actor" as actor
+boundary "ManageAccountView" as manageView
+control "AccountController" as controller
+entity "AccountRepository" as model
+database "Database" as database
+' Main Flow
+activate actor
+actor -> manageView : Access "Manage Account"
+activate manageView
+manageView -> controller : Request Account list
+activate controller
+controller -> model : Inject repository
+activate model
+model -> database : SELECT * FROM Accounts
+activate database
+database --> model : Return Account list
+deactivate database
+model --> controller : Return list
+deactivate model
+controller --> manageView : Render Account list
+deactivate controller
+' Option TH1: Create Account
+opt **TH1. Người dùng thêm quản trị viên**
+  ref over actor
+SD40.1.Người dùng tạo quản trị viên
+end ref
+end
+' Option TH2: Edit Account
+opt **TH2. Người dùng chỉnh sửa quản trị viên**
+  ref over actor
+SD40.2.Người dùng sửa quản trị viên
+end ref
+end
+' Option TH3: Reset MFA
+opt **TH3. Người dùng reset MFA**
+  ref over actor
+SD40.3.Người dùng reset MFA
+end ref
+end
+' Option TH4: Delete Account
+opt **TH4.Người dùng xóa quản trị viên**
+  ref over actor
+SD40.4.Người dùng xóa quản trị viên
+end ref
+end
+@enduml

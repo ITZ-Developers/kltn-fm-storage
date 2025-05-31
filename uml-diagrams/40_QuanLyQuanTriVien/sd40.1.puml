@@ -1,0 +1,47 @@
+@startuml SQ
+autonumber
+title SD40.1. Thêm quản trị viên
+
+actor "Actor" as actor
+boundary "ManageAccountView" as manageView
+control "accountController" as controller
+entity "accountRepository" as model
+database "Database" as database
+
+activate actor
+actor -> manageView : Click "Thêm mới"
+activate manageView
+
+manageView -> actor : Display create form
+actor -> manageView : Input account (fullName, username, email, address, phoneNumber, group, password, confirm password)
+
+manageView -> manageView : Validate fields
+alt Invalid input
+    manageView -> actor : Show validation errors\n(Empty: fullName, username, email, phoneNumber, password, confirmPassword, group)
+    deactivate manageView
+    deactivate actor
+else Valid input
+    manageView -> controller : Submit create form
+    activate controller
+
+    controller -> model : Inject repository
+    activate model
+
+    model -> database : INSERT INTO accounts (fullName, username, email, address, phoneNumber, group, passwordHash)
+    activate database
+    database --> model : Insert success
+    deactivate database
+
+    model --> controller : Notify success
+    deactivate model
+
+    controller --> manageView : Return success
+    deactivate controller
+
+    manageView -> actor : Notify "account created successfully"
+    manageView -> manageView : Refresh account list
+end
+
+deactivate manageView
+deactivate actor
+@enduml

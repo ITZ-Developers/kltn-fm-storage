@@ -1,0 +1,60 @@
+@startuml SQ
+autonumber
+title SD40.4. Xóa quản trị viên
+
+actor "Actor" as actor
+boundary "ManageAccountView" as manageView
+control "AccountController" as controller
+entity "AccountRepository" as model
+database "Database" as database
+
+activate actor
+actor -> manageView : Swipe to delete an account
+activate manageView
+
+manageView -> actor : Confirm deletion
+alt User confirms
+    manageView -> controller : Call DELETE /account/{id}
+    activate controller
+
+    controller -> model : Inject repository
+    activate model
+
+    model -> database : SELECT is_super_admin FROM account WHERE id=?
+    activate database
+    database --> model : Return isSuperAdmin flag
+    deactivate database
+    deactivate database
+
+    alt isSuperAdmin == true
+        model --> controller : Cannot delete super admin
+        controller --> manageView : Show error "Cannot delete isSuperAdmin"
+        deactivate model
+        deactivate model
+        deactivate controller
+        deactivate controller
+    else
+        model -> database : DELETE FROM account WHERE id=?
+        activate database
+        database --> model : Delete success
+        deactivate database
+        deactivate database
+
+        model --> controller : Notify success
+        deactivate model
+        deactivate model
+
+        controller --> manageView : Return success
+        deactivate controller
+        deactivate controller
+
+        manageView -> manageView : Refresh account list
+        manageView -> actor : Notify "Account deleted successfully"
+    end
+else User cancels
+    manageView -> actor : Cancel delete
+end
+
+deactivate manageView
+deactivate actor
+@enduml

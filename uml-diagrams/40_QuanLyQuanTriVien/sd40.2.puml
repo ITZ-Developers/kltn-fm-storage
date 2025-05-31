@@ -1,0 +1,69 @@
+@startuml SQ
+autonumber
+title SD40.2. Sửa quản trị viên
+
+actor "Actor" as actor
+boundary "ManageaccountView" as manageView
+control "accountController" as controller
+entity "accountRepository" as model
+database "Database" as database
+
+activate actor
+actor -> manageView : Select a account to edit
+activate manageView
+
+manageView -> controller : Request account details
+activate controller
+
+controller -> model : Inject repository
+activate model
+
+model -> database : findById()
+activate database
+database --> model : Return account details
+deactivate database
+deactivate database
+
+model --> controller : Return details
+deactivate model
+deactivate model
+
+controller --> manageView : Render edit form
+deactivate controller
+deactivate controller
+
+actor -> manageView : Input updated fullName, username, email, address, phoneNumber, group, password, confirm password
+
+manageView -> manageView : Validate fields
+alt Invalid input
+    manageView -> actor : Show validation errors\n(Empty: fullName, username, email, address, phoneNumber, group, password, confirm password)
+    deactivate manageView
+    deactivate actor
+else Valid input
+    manageView -> controller : Submit edit form
+    activate controller
+
+    controller -> model : Inject repository
+    activate model
+
+    model -> database : save(account)
+    activate database
+    database --> model : Update success
+    deactivate database
+    deactivate database
+
+    model --> controller : Notify success
+    deactivate model
+    deactivate model
+
+    controller --> manageView : Return success
+    deactivate controller
+    deactivate controller
+
+    manageView -> actor : Notify "account updated successfully"
+    manageView -> manageView : Display account list
+end
+
+deactivate manageView
+deactivate actor
+@enduml
