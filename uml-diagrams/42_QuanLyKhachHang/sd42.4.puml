@@ -1,0 +1,54 @@
+@startuml SQ
+autonumber
+title SD42.4. Xóa khách hàng
+
+actor "Actor" as actor
+boundary "ManageCustomerView" as manageView
+control "CustomerController" as controller
+entity "CustomerRepository" as model
+database "Database" as database
+
+activate actor
+actor -> manageView : Swipe to delete a Customer
+activate manageView
+
+manageView -> actor : Confirm deletion
+alt User confirms
+    manageView -> controller : Call DELETE /v1/customer/{id}
+    activate controller
+
+    controller -> model : Inject repository
+    activate model
+
+    model -> database : SELECT COUNT(*) FROM restaurant WHERE customer_id = ?
+    activate database
+    database --> model : Return count
+    deactivate database
+
+    alt count > 0
+        model --> controller : Customer has linked restaurants
+        controller --> manageView : Show error "Can not delete customer"
+        deactivate model
+        deactivate controller
+    else
+        model -> database : DELETE FROM customer WHERE id = ?
+        activate database
+        database --> model : Delete success
+        deactivate database
+
+        model --> controller : Notify success
+        deactivate model
+
+        controller --> manageView : Return success
+        deactivate controller
+
+        manageView -> manageView : Refresh customer list
+        manageView -> actor : Notify "Customer deleted successfully"
+    end
+else User cancels
+    manageView -> actor : Cancel delete
+end
+
+deactivate manageView
+deactivate actor
+@enduml

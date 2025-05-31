@@ -1,0 +1,49 @@
+@startuml SQ
+autonumber
+title SD42. Quản lý khách hàng
+actor "Actor" as actor
+boundary "ManageCustomerView" as manageView
+control "CustomerController" as controller
+entity "CustomerRepository" as model
+database "Database" as database
+' Main Flow
+activate actor
+actor -> manageView : Access "Manage Customer"
+activate manageView
+manageView -> controller : Request Customer list
+activate controller
+controller -> model : Inject repository
+activate model
+model -> database : SELECT * FROM Customers
+activate database
+database --> model : Return Customer list
+deactivate database
+model --> controller : Return list
+deactivate model
+controller --> manageView : Render Customer list
+deactivate controller
+' Option TH1: Create Customer
+opt **TH1. Người dùng thêm khách hàng**
+  ref over actor
+SD42.1.Người dùng tạo khách hàng
+end ref
+end
+' Option TH2: Edit Customer
+opt **TH2. Người dùng chỉnh sửa khách hàng**
+  ref over actor
+SD42.2.Người dùng sửa khách hàng
+end ref
+end
+' Option TH3: Reset MFA
+opt **TH3. Người dùng reset MFA**
+  ref over actor
+SD42.3.Người dùng reset MFA
+end ref
+end
+' Option TH4: Delete Customer
+opt **TH4.Người dùng xóa khách hàng**
+  ref over actor
+SD42.4.Người dùng xóa khách hàng
+end ref
+end
+@enduml
