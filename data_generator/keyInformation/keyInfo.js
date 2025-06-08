@@ -157,6 +157,82 @@ const descriptions = [
   "Khóa API định tuyến dữ liệu",
 ];
 
+const systems = [
+  "auth",
+  "gateway",
+  "user",
+  "payment",
+  "noti",
+  "order",
+  "admin",
+  "client",
+  "cli",
+  "bot",
+  "cron",
+  "inventory",
+  "report",
+  "service",
+  "core",
+  "api",
+];
+
+const environments = [
+  "dev",
+  "test",
+  "staging",
+  "prod",
+  "beta",
+  "alpha",
+  "int",
+  "uat",
+  "qa",
+  "",
+];
+const purposes = [
+  "token",
+  "access",
+  "key",
+  "secret",
+  "session",
+  "id",
+  "cert",
+  "config",
+  "hook",
+  "callback",
+  "client",
+  "server",
+];
+const suffixes = [
+  "",
+  "v1",
+  "v2",
+  "v3",
+  () => `v${Math.floor(Math.random() * 5 + 1)}`,
+  () => Math.random().toString(36).substring(2, 6),
+];
+
+const projectCodes = [
+  "hx",
+  "nx",
+  "pulse",
+  "zeta",
+  "nova",
+  "orbit",
+  "alpha",
+  "corex",
+  "glitch",
+  "echo",
+];
+const tags = [
+  "internal",
+  "external",
+  "shared",
+  "private",
+  "main",
+  "backup",
+  "legacy",
+];
+
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -171,16 +247,6 @@ function getRandomInt(min, max) {
 
 function getRandomElement(array) {
   return array[getRandomInt(0, array.length - 1)];
-}
-
-function generateRandomDate() {
-  const randomPastYear = getRandomInt(1960, 2000);
-  const randomMonth = getRandomInt(1, 12).toString().padStart(2, "0");
-  const randomDay = getRandomInt(1, 28).toString().padStart(2, "0");
-  const randomHour = getRandomInt(0, 23).toString().padStart(2, "0");
-  const randomMinute = getRandomInt(0, 59).toString().padStart(2, "0");
-  const randomSecond = getRandomInt(0, 59).toString().padStart(2, "0");
-  return `${randomDay}/${randomMonth}/${randomPastYear} ${randomHour}:${randomMinute}:${randomSecond}`;
 }
 
 function generateRandomPhone() {
@@ -233,10 +299,55 @@ function generateAdditionalInformation(kind) {
   return JSON.stringify(JSON.stringify(data));
 }
 
-function generateRandomData() {
-  return names.map((name) => {
+function getRand(arr) {
+  const val = arr[Math.floor(Math.random() * arr.length)];
+  return typeof val === "function" ? val() : val;
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function generateSampleName() {
+  const sys = getRand(systems);
+  const env = getRand(environments);
+  const purpose = getRand(purposes);
+  const suffix = getRand(suffixes);
+  const proj = getRand(projectCodes);
+  const tag = getRand(tags);
+
+  const formatType = Math.floor(Math.random() * 8);
+
+  switch (formatType) {
+    case 0:
+      return `${sys}-${purpose}-${env}${suffix ? "-" + suffix : ""}`;
+    case 1:
+      return `${purpose}_${sys}_${env}`;
+    case 2:
+      return `${capitalize(sys)} ${capitalize(purpose)} ${env.toUpperCase()}${
+        suffix ? " " + suffix : ""
+      }`;
+    case 3:
+      return `${sys}.${purpose}.${env}${suffix ? "." + suffix : ""}`;
+    case 4:
+      return `${proj}-${sys}-${purpose}-${env}${suffix ? "-" + suffix : ""}`;
+    case 5:
+      return `${sys}-${env}-${tag}-${purpose}${suffix ? "-" + suffix : ""}`;
+    case 6:
+      return `${proj}_${purpose}_${tag}_${env}${suffix ? "_" + suffix : ""}`;
+    case 7:
+      return `${sys}${suffix ? "-" + suffix : ""}`;
+    default:
+      return `${sys}-${purpose}-${env}`;
+  }
+}
+
+function generateRandomData(count = 100) {
+  const set = new Set();
+  while (set.size < count) {
+    const name = generateSampleName();
     const kind = getRandomInt(1, 2);
-    return {
+    set.add({
       name,
       kind,
       additionalInformation: generateAdditionalInformation(kind),
@@ -244,16 +355,18 @@ function generateRandomData() {
       keyInformationGroupId: getRandomElement(keyInformationGroupIds),
       organizationId: getRandomElement(organizationIds),
       tagId: getRandomElement(tagIds),
-    };
-  });
+    });
+  }
+  return [...set];
 }
 
-function saveToJson(fileName) {
-  const data = generateRandomData();
+function saveToJson(count, fileName) {
+  const data = generateRandomData(count);
   fs.writeFileSync(fileName, JSON.stringify(data, null, 2), "utf8");
   console.log(`File JSON đã được tạo: ${fileName}`);
 }
 
+const count = 2000;
 const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, "");
 const fileName = `key_information_${timestamp}.json`;
-saveToJson(fileName);
+saveToJson(count, fileName);

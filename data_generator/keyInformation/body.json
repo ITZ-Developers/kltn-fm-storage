@@ -1,5 +1,5 @@
 {
-  "additionalInformation": "{{additionalInformation}}",
+  "additionalInformation": {{additionalInformation}},
   "description": "{{description}}",
   "keyInformationGroupId": "{{keyInformationGroupId}}",
   "kind": "{{kind}}",

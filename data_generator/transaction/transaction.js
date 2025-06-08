@@ -386,8 +386,120 @@ function generateRandomDate(minYear, maxYear) {
   return `${randomDay}/${randomMonth}/${randomPastYear} ${randomHour}:${randomMinute}:${randomSecond}`;
 }
 
-function generateRandomData() {
-  return names.map((name) => {
+function genTransactionName(type = "expense") {
+  const actions = {
+    income: [
+      "Nhận tiền",
+      "Được chuyển khoản",
+      "Hoàn tiền",
+      "Tiền thưởng",
+      "Thu nhập từ",
+      "Tiền hoàn trả",
+      "Nhận lãi suất",
+      "Thu nhập đầu tư",
+      "Tiền bán hàng",
+      "Tiền hỗ trợ",
+    ],
+    expense: [
+      "Thanh toán",
+      "Chi trả",
+      "Mua",
+      "Đóng phí",
+      "Trả tiền",
+      "Chi cho",
+      "Đặt hàng",
+      "Đầu tư vào",
+      "Chuyển khoản đến",
+      "Đặt cọc cho",
+    ],
+    transfer: [
+      "Chuyển tiền",
+      "Rút tiền",
+      "Nạp tiền",
+      "Chuyển khoản",
+      "Chuyển nội bộ",
+      "Gửi tiền",
+    ],
+  };
+
+  const targets = {
+    income: [
+      "lương tháng",
+      "khách hàng",
+      "công ty",
+      "đối tác",
+      "ngân hàng",
+      "bảo hiểm",
+      "bán tài sản",
+      "người thân",
+      "cổ tức",
+      "thu nhập phụ",
+    ],
+    expense: [
+      "điện",
+      "nước",
+      "internet",
+      "mua hàng online",
+      "tiền nhà",
+      "tiền học",
+      "xăng xe",
+      "dịch vụ streaming",
+      "mua đồ ăn",
+      "tiền khám bệnh",
+      "dịch vụ ngân hàng",
+      "du lịch",
+      "quà tặng",
+      "phí bảo trì",
+      "mua quần áo",
+      "đi taxi",
+    ],
+    transfer: [
+      "tài khoản phụ",
+      "ví điện tử",
+      "ATM",
+      "ngân hàng ACB",
+      "người thân",
+      "đồng nghiệp",
+    ],
+  };
+
+  const suffixes = {
+    income: [
+      "",
+      "tháng 5",
+      "tháng này",
+      "từ công việc freelance",
+      "cuối năm",
+      "từ hợp đồng ABC",
+    ],
+    expense: [
+      "",
+      "tháng 5",
+      "cuối tháng",
+      "cho gia đình",
+      "theo định kỳ",
+      "khi đi du lịch",
+    ],
+    transfer: ["", "ngày hôm nay", "gấp", "cho mục đích cá nhân", "tháng này"],
+  };
+
+  const actionList = actions[type] || actions.expense;
+  const targetList = targets[type] || targets.expense;
+  const suffixList = suffixes[type] || [];
+
+  const action = actionList[Math.floor(Math.random() * actionList.length)];
+  const target = targetList[Math.floor(Math.random() * targetList.length)];
+  const suffix = suffixList[Math.floor(Math.random() * suffixList.length)];
+
+  return `${action} ${target} ${suffix}`.trim();
+}
+
+function generateRandomData(count) {
+  const set = new Set();
+  while (set.size < count) {
+    const types = ["income", "expense", "transfer"];
+    const type = types[Math.floor(Math.random() * types.length)];
+    const name = genTransactionName(type);
     const kind = getRandomInt(1, 2);
     const isApproved = getRandomInt(0, 1);
     const approvedBy = isApproved == 1 ? getRandomElement(employeeIds) : "";
@@ -395,7 +507,7 @@ function generateRandomData() {
       kind == 1
         ? getRandomElement(categoryIds.income)
         : getRandomElement(categoryIds.expense);
-    return {
+    set.add({
       addedBy: getRandomElement(employeeIds),
       approvedBy,
       categoryId,
@@ -407,8 +519,9 @@ function generateRandomData() {
       tagId: getRandomElement(tagIds),
       transactionDate: generateRandomDate(2000, 2025),
       transactionGroupId: getRandomElement(transactionGroupIds),
-    };
-  });
+    });
+  }
+  return [...set];
 }
 
 function jsonToCsv(data) {
@@ -419,13 +532,14 @@ function jsonToCsv(data) {
   return [headers.join(","), ...rows].join("\n");
 }
 
-function saveToCsv(fileName) {
-  const data = generateRandomData();
+function saveToCsv(count, fileName) {
+  const data = generateRandomData(count);
   const csvContent = jsonToCsv(data);
   fs.writeFileSync(fileName, csvContent, "utf8");
   console.log(`File CSV đã được tạo: ${fileName}`);
 }
 
+const count = 2000;
 const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, "");
 const fileName = `transaction_${timestamp}.csv`;
-saveToCsv(fileName);
+saveToCsv(count, fileName);

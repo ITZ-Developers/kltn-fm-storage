@@ -145,13 +145,67 @@ function getRandomElement(array) {
   return array[getRandomInt(0, array.length - 1)];
 }
 
-function generateRandomData() {
-  return names.map((name) => ({
-    name,
-    note: getRandomElement(notes),
-    tagId: getRandomElement(tagIds),
-    organizationId: getRandomElement(organizationIds),
-  }));
+function genProjectName() {
+  const prefixes = [
+    "Nền tảng",
+    "Hệ thống",
+    "Giải pháp",
+    "Ứng dụng",
+    "Phần mềm",
+    "Công cụ",
+    "Dịch vụ",
+    "Trình quản lý",
+  ];
+
+  const purposes = [
+    "quản lý nhân sự",
+    "theo dõi tài chính",
+    "quản lý học sinh",
+    "giám sát thiết bị",
+    "hỗ trợ khách hàng",
+    "đặt lịch khám",
+    "thống kê bán hàng",
+    "quản lý đơn hàng",
+    "phân tích dữ liệu",
+    "bảo mật hệ thống",
+    "kết nối người dùng",
+    "theo dõi vận hành",
+    "quản lý sự kiện",
+    "lưu trữ tài liệu",
+  ];
+
+  const suffixes = [
+    "",
+    "AI hỗ trợ",
+    "tự động",
+    "đám mây",
+    "theo thời gian thực",
+    "cho doanh nghiệp vừa và nhỏ",
+    "dành cho giáo dục",
+    "trên đa nền tảng",
+    "thông minh",
+    "chuẩn hóa ISO",
+  ];
+
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  const purpose = purposes[Math.floor(Math.random() * purposes.length)];
+  const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+
+  return `${prefix} ${purpose} ${suffix}`.trim();
+}
+
+function generateRandomData(count) {
+  const set = new Set();
+  while (set.size < count) {
+    const name = genProjectName();
+    set.add({
+      name,
+      note: getRandomElement(notes),
+      tagId: getRandomElement(tagIds),
+      organizationId: getRandomElement(organizationIds),
+    });
+  }
+  return [...set];
 }
 
 function jsonToCsv(data) {
@@ -162,13 +216,14 @@ function jsonToCsv(data) {
   return [headers.join(","), ...rows].join("\n");
 }
 
-function saveToCsv(fileName) {
-  const employeeData = generateRandomData();
+function saveToCsv(count, fileName) {
+  const employeeData = generateRandomData(count);
   const csvContent = jsonToCsv(employeeData);
   fs.writeFileSync(fileName, csvContent, "utf8");
   console.log(`File CSV đã được tạo: ${fileName}`);
 }
 
+const count = 500;
 const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, "");
 const fileName = `project_${timestamp}.csv`;
-saveToCsv(fileName);
+saveToCsv(count, fileName);

@@ -184,18 +184,70 @@ function generateRandomDate(minYear, maxYear) {
   return `${randomDay}/${randomMonth}/${randomPastYear} ${randomHour}:${randomMinute}:${randomSecond}`;
 }
 
-function generateRandomData() {
-  return names.map((name) => ({
-    description: getRandomElement(descriptions),
-    expirationDate: generateRandomDate(2019, 2035),
-    kind: getRandomInt(1, 2),
-    money: getRandomInt(100000, 100000000),
-    name,
-    periodKind: getRandomInt(1, 3),
-    serviceGroupId: getRandomElement(serviceGroupIds),
-    startDate: generateRandomDate(2015, 2018),
-    tagId: getRandomElement(tagIds),
-  }));
+function genServiceName() {
+  const verbs = [
+    "quản lý",
+    "theo dõi",
+    "tích hợp",
+    "phân tích",
+    "bảo mật",
+    "giám sát",
+    "vận hành",
+    "lưu trữ",
+    "quét",
+    "đồng bộ",
+  ];
+
+  const domains = [
+    "dữ liệu",
+    "email",
+    "hệ thống",
+    "website",
+    "thiết bị IoT",
+    "camera an ninh",
+    "ứng dụng di động",
+    "hạ tầng mạng",
+    "người dùng",
+    "thanh toán",
+  ];
+
+  const suffixes = [
+    "",
+    "đám mây",
+    "từ xa",
+    "thông minh",
+    "do AI hỗ trợ",
+    "an toàn cao",
+    "đa nền tảng",
+    "real-time",
+    "với báo cáo chi tiết",
+    "tự động",
+  ];
+
+  const verb = verbs[Math.floor(Math.random() * verbs.length)];
+  const domain = domains[Math.floor(Math.random() * domains.length)];
+  const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+
+  return `Dịch vụ ${verb} ${domain} ${suffix}`.trim();
+}
+
+function generateRandomData(count) {
+  const set = new Set();
+  while (set.size < count) {
+    const name = genServiceName();
+    set.add({
+      description: getRandomElement(descriptions),
+      expirationDate: generateRandomDate(2019, 2035),
+      kind: getRandomInt(1, 2),
+      money: getRandomInt(100000, 100000000),
+      name,
+      periodKind: getRandomInt(1, 3),
+      serviceGroupId: getRandomElement(serviceGroupIds),
+      startDate: generateRandomDate(2015, 2018),
+      tagId: getRandomElement(tagIds),
+    });
+  }
+  return [...set];
 }
 
 function jsonToCsv(data) {
@@ -206,13 +258,14 @@ function jsonToCsv(data) {
   return [headers.join(","), ...rows].join("\n");
 }
 
-function saveToCsv(fileName) {
-  const data = generateRandomData();
+function saveToCsv(count, fileName) {
+  const data = generateRandomData(count);
   const csvContent = jsonToCsv(data);
   fs.writeFileSync(fileName, csvContent, "utf8");
   console.log(`File CSV đã được tạo: ${fileName}`);
 }
 
+const count = 2000;
 const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, "");
 const fileName = `service_${timestamp}.csv`;
-saveToCsv(fileName);
+saveToCsv(count, fileName);

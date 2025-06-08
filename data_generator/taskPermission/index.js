@@ -1,5 +1,15 @@
 const fs = require("fs");
 
+const accountIds = [
+  8313653263695872, 8320740878581760, 8340623243018240, 8340623268478976,
+  8340623292366848, 8340623315599360, 8340623342403584, 8340623382085632,
+  8340623409840128, 8340623438053376, 8340623473246208, 8340623495036928,
+  8340623523217408, 8340623553691648, 8340623575252992, 8340623595995136,
+  8340623616966656, 8340623647571968, 8340623681912832, 8340623704227840,
+  8340623736209408, 8340623760031744, 8340623786475520, 8340623821406208,
+  8340623848865792, 8340623874719744,
+];
+
 const projectIds = [
   8324561646682112, 8324807362117632, 8340725720580096, 8340725742698496,
   8340725783625728, 8340725800992768, 8340725816852480, 8340725834350592,
@@ -117,199 +127,25 @@ const projectIds = [
   8527892320387072, 8527892325498880, 8527892330446848,
 ];
 
-const names = [
-  "Phân tích yêu cầu khách hàng",
-  "Thiết kế UI/UX",
-  "Lập kế hoạch dự án",
-  "Xây dựng database",
-  "Triển khai backend API",
-  "Viết tài liệu hướng dẫn",
-  "Test tính năng mới",
-  "Sửa lỗi hiển thị UI",
-  "Tối ưu hiệu suất query",
-  "Họp team cập nhật tiến độ",
-  "Nghiên cứu công nghệ mới",
-  "Cấu hình CI/CD pipeline",
-  "Viết test case tự động",
-  "Tích hợp thanh toán online",
-  "Triển khai hệ thống logging",
-  "Đánh giá bảo mật hệ thống",
-  "Chuẩn bị môi trường staging",
-  "Phân quyền người dùng",
-  "Cấu hình Redis cache",
-  "Cập nhật API documentation",
-  "Thử nghiệm AI recommendation",
-  "Nâng cấp phiên bản framework",
-  "Xây dựng hệ thống notification",
-  "Tạo mock data cho test",
-  "Tối ưu thời gian phản hồi API",
-  "Nâng cấp hệ thống tìm kiếm",
-  "Cấu hình load balancing",
-  "Viết script migration data",
-  "Thử nghiệm trên mobile",
-  "Thiết lập monitoring",
-  "Cải thiện UX trên mobile",
-  "Đồng bộ dữ liệu real-time",
-  "Viết unit test",
-  "Tích hợp OAuth2",
-  "Chỉnh sửa layout trang chủ",
-  "Triển khai feature đa ngôn ngữ",
-  "Kiểm tra bảo mật API",
-  "Bổ sung chức năng export CSV",
-  "Thử nghiệm stress test",
-  "Tạo dashboard quản trị",
-  "Phát triển tính năng chat",
-  "Xây dựng chức năng báo cáo",
-  "Tích hợp email notification",
-  "Tối ưu performance frontend",
-  "Cập nhật UI theo feedback",
-  "Fix bug hiển thị trên Safari",
-  "Kiểm tra SEO tối ưu",
-  "Nâng cấp giao diện dashboard",
-  "Tối ưu database indexing",
-  "Viết script backup dữ liệu",
-  "Kiểm tra tương thích trên iPad",
-  "Phát triển tính năng lịch hẹn",
-  "Xây dựng chatbot hỗ trợ",
-  "Tạo role-based access control",
-  "Tích hợp Google Analytics",
-  "Thêm chức năng import dữ liệu",
-  "Thiết lập job scheduling",
-  "Tối ưu xử lý ảnh",
-  "Thử nghiệm phân quyền chi tiết",
-  "Cải thiện UX trang đăng ký",
-  "Thêm API batch processing",
-  "Tối ưu tải trang",
-  "Viết plugin hỗ trợ",
-  "Xây dựng hệ thống referral",
-  "Cấu hình multi-region deploy",
-  "Tối ưu session management",
-  "Tích hợp AI chatbot",
-  "Thử nghiệm CDN caching",
-  "Viết unit test nâng cao",
-  "Bổ sung xác thực 2 lớp",
-  "Nâng cấp hệ thống OAuth",
-  "Tích hợp đăng nhập bằng SSO",
-  "Phát triển tính năng gamification",
-  "Tối ưu SQL query",
-  "Cấu hình CI/CD nâng cao",
-  "Tạo tài liệu API client",
-  "Thử nghiệm UI với người dùng",
-  "Tích hợp voice assistant",
-  "Xây dựng REST API",
-  "Thêm chức năng đa nhiệm",
-  "Nâng cấp UX checkout",
-  "Phát triển hệ thống loyalty",
-  "Nâng cấp bảo mật JWT",
-  "Tạo custom analytics",
-  "Cải thiện performance caching",
-  "Xây dựng hệ thống tagging",
-  "Tối ưu truy vấn big data",
-  "Tích hợp Google Maps API",
-  "Phát triển hệ thống ticketing",
-  "Thiết lập hệ thống sharding",
-  "Bổ sung tính năng user activity tracking",
-  "Xây dựng workflow automation",
-  "Cấu hình WebSocket realtime",
-  "Tích hợp tính năng offline mode",
-  "Cấu hình hệ thống CDN",
-  "Tích hợp A/B testing",
-  "Tối ưu performance SSR",
-  "Phát triển API rate limiting",
-  "Tạo custom event tracking",
-  "Cấu hình serverless function",
-  "Bổ sung theme dark mode",
-  "Xây dựng hệ thống logging nâng cao",
-  "Cập nhật UI/UX mobile app",
-  "Tích hợp chatbot hỗ trợ",
-  "Thiết lập monitoring bằng OpenTelemetry",
-  "Tích hợp microservices mới",
-  "Cải tiến hệ thống webhook",
-  "Tối ưu CI/CD workflow",
-  "Thêm chế độ offline-first",
-  "Nâng cấp authentication flow",
-  "Triển khai feature email digest",
-  "Cấu hình auto-scaling",
-  "Nâng cấp hệ thống push notification",
-  "Cấu hình multi-tenancy",
-  "Xây dựng hệ thống dynamic forms",
-  "Tích hợp AI-based recommendation",
-  "Tạo công cụ admin CLI",
-  "Tối ưu JavaScript bundle size",
-  "Xây dựng document versioning",
-  "Cấu hình hệ thống auto-deploy",
-  "Thử nghiệm API mock server",
-];
-
-const notes = [
-  "Phân tích chi tiết yêu cầu từ khách hàng",
-  "Thiết kế giao diện với user-friendly UI",
-  "Tạo roadmap chi tiết cho dự án",
-  "Xây dựng schema database tối ưu",
-  "Cấu trúc backend theo microservices",
-  "Viết tài liệu đầy đủ cho dev team",
-  "Test tự động với Jest và Cypress",
-  "Fix lỗi responsive UI trên mobile",
-  "Tối ưu query với indexing hợp lý",
-  "Cập nhật tiến độ dự án hàng tuần",
-  "Nghiên cứu GraphQL cho backend",
-  "Tích hợp CI/CD với GitHub Actions",
-  "Viết test case với coverage 90%",
-  "Kết nối API với Stripe cho thanh toán",
-  "Triển khai logging với ELK stack",
-  "Thử nghiệm penetration testing",
-  "Tạo môi trường staging giống production",
-  "Thiết lập quyền truy cập theo vai trò",
-  "Cấu hình Redis cache cho API",
-  "Cập nhật Swagger API docs",
-  "Thử nghiệm AI recommendation engine",
-  "Nâng cấp Node.js lên phiên bản mới",
-  "Tạo hệ thống thông báo real-time",
-  "Dữ liệu test cần đa dạng",
-  "Cải thiện response time API xuống dưới 100ms",
-  "Thêm bộ lọc tìm kiếm nâng cao",
-  "Tối ưu caching policy",
-  "Viết script di chuyển dữ liệu",
-  "Kiểm tra UI/UX trên nhiều thiết bị",
-  "Cấu hình hệ thống cảnh báo lỗi",
-  "Tích hợp real-time sync với WebSocket",
-  "Viết test unit cho backend services",
-  "Thử nghiệm OAuth2 authentication",
-  "Chỉnh sửa layout theo yêu cầu UX",
-  "Đa ngôn ngữ với i18n",
-  "Kiểm thử bảo mật OWASP top 10",
-  "Tạo chức năng xuất dữ liệu",
-  "Thử nghiệm hệ thống dưới tải cao",
-  "Tạo dashboard với dữ liệu trực quan",
-  "Thêm chức năng chat nội bộ",
-  "Xây dựng báo cáo tùy chỉnh",
-  "Thêm thông báo email tự động",
-  "Cải thiện tốc độ load trang",
-  "Cập nhật giao diện theo feedback người dùng",
-];
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function shuffleArray(arr) {
+  return arr
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
 }
 
-function getRandomElement(array) {
-  return array[getRandomInt(0, array.length - 1)];
-}
-
-function generateRandomData() {
+function generateAccountGroupPairs(accountIds, groupIds, ratio = 0.7) {
   const result = [];
 
-  for (const projectId of projectIds) {
-    for (let i = 0; i < 5; i++) {
-      const name = getRandomElement(names);
-      result.push({
-        name,
-        state: getRandomInt(1, 2),
-        note: getRandomElement(notes),
-        projectId,
-      });
-    }
-  }
+  accountIds.forEach((accountId) => {
+    const shuffled = shuffleArray(groupIds);
+    const groupCount = Math.floor(groupIds.length * ratio);
+    const selected = shuffled.slice(0, groupCount);
+
+    selected.forEach((groupId) => {
+      result.push({ accountId, projectId: groupId });
+    });
+  });
 
   return result;
 }
@@ -322,13 +158,13 @@ function jsonToCsv(data) {
   return [headers.join(","), ...rows].join("\n");
 }
 
-function saveToCsv(fileName) {
-  const employeeData = generateRandomData();
-  const csvContent = jsonToCsv(employeeData);
+function saveToCsv(fileName, data) {
+  const csvContent = jsonToCsv(data);
   fs.writeFileSync(fileName, csvContent, "utf8");
   console.log(`File CSV đã được tạo: ${fileName}`);
 }
 
+const pairs = generateAccountGroupPairs(accountIds, projectIds, 0.7);
 const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, "");
-const fileName = `task_${timestamp}.csv`;
-saveToCsv(fileName);
+const fileName = `task_permission_${timestamp}.csv`;
+saveToCsv(fileName, pairs);
